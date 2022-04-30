@@ -1,8 +1,12 @@
 package main
 import (
 	"net/http"
+    "encoding/json"
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
+	"fmt"
 )
+
 func main() {
 	router := gin.Default()
 	router.GET("/", rootHandler)
@@ -12,21 +16,27 @@ func main() {
 	router.POST("/books", postBookHandler)
 	router.Run(":8111")
 }
-type BoolInput struct {
-	Title string
-	Price int
-	SubTitle string
+type BookInput struct {
+	Title string  `json:"title" binding:"required"`
+	Price json.Number `json:"price" binding:"required"`
+	//SubTitle string
 }
 func postBookHandler(c *gin.Context) {
-	var bookInput BoolInput
+	var bookInput BookInput
 	err := c.ShouldBindJSON(&bookInput)
 	if err != nil {
-		//log.Fatal(err)
+		for _, e := range err.(validator.ValidationErrors) {
+			erroMessage := fmt.Sprintf("Error on filed %s, condiiton: %s", e.Field(), e.ActualTag())
+			c.JSON(http.StatusBadRequest, erroMessage)
+			//fmt.Println(err)
+			return
+		}
+		
 	}
 	c.JSON(http.StatusOK, gin.H {
 		"title": bookInput.Title,
 		"price": bookInput.Price,
-		"SubTitle": bookInput.SubTitle,
+		//"SubTitle": bookInput.SubTitle,
 	})
 
 }
