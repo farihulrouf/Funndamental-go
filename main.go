@@ -1,10 +1,51 @@
 package main
 import (
+	"log"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"pustaka-api/handler"
+	"pustaka-api/book"
+	"gorm.io/driver/sqlite"
+  	"gorm.io/gorm"
 )
 
 func main() {
+
+    db, err := gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
+	if err != nil {
+		log.Fatal("Db connection error")
+	}
+	fmt.Println("Database Connection successed")
+	db.AutoMigrate(&book.Book{})
+	// TEST CRUD
+	/*
+	book := book.Book{}
+	book.Title = "Node Js"
+	book.Price = 120000
+	book.Rating = 5
+	book.Description = "Buku menjelaskan tentang pemrograman nodejs"
+
+	err = db.Create(&book).Error
+	if err != nil {
+
+		log.Fatal("==========================")
+		log.Fatal("Error creating book record")
+		log.Fatal("==========================")
+	}
+	*/
+	var books []book.Book
+	err = db.Debug().Find(&books).Error
+	if err != nil {
+
+		log.Fatal("==========================")
+		log.Fatal("Error read book record")
+		log.Fatal("==========================")
+	}
+	for _, b := range books {	
+		//fmt.Println("Title :", book.Title)
+		fmt.Println("book object %v ", b)
+	}
+
 	router := gin.Default()
 	router.GET("/", handler.RootHandler)
 	router.GET("/six", handler.SixHandler)
