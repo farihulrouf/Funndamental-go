@@ -16,8 +16,10 @@ func main() {
 		log.Fatal("Db connection error")
 	}
 	fmt.Println("Database Connection successed")
-	db.AutoMigrate(&book.Book{})
+	db.AutoMigrate(&book.Book{}) //create Migrate Db model to Database
 	// TEST CRUD
+
+	// Create
 	/*
 	book := book.Book{}
 	book.Title = "Node Js"
@@ -33,6 +35,9 @@ func main() {
 		log.Fatal("==========================")
 	}
 	*/
+
+	// Read get all
+	/*
 	var books []book.Book
 	err = db.Debug().Find(&books).Error
 	if err != nil {
@@ -45,6 +50,37 @@ func main() {
 		//fmt.Println("Title :", book.Title)
 		fmt.Println("book object %v ", b)
 	}
+	*/
+
+	// Find Db
+	var book book.Book
+	err = db.Debug().Where("id = ?", 1).First(&book).Error
+	if err != nil {
+		fmt.Println("===========================")
+		fmt.Println("Error Finding Record")
+		fmt.Println("===========================")
+	}
+
+	//deleted
+	/*
+	err = db.Delete(&book).Error
+	if err != nil {
+		fmt.Println("===========================")
+		fmt.Println("Error Deleting Record")
+		fmt.Println("===========================")
+	}
+	*/
+
+	//Updated
+	/*
+	book.Title = "Man Triger Revisied Edition"
+	err = db.Save(&book).Error
+	if err != nil {
+		fmt.Println("===========================")
+		fmt.Println("Error Update Record")
+		fmt.Println("===========================")
+	}
+	*/
 
 	router := gin.Default()
 	router.GET("/", handler.RootHandler)
