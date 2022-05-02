@@ -17,6 +17,29 @@ func main() {
 	}
 	fmt.Println("Database Connection successed")
 	db.AutoMigrate(&book.Book{}) //create Migrate Db model to Database
+	bookRepository := book.NewRepository(db)
+	
+	//Find
+	book, err := bookRepository.FindByID(4)
+	fmt.Println(book)
+
+	//Create 
+	/*
+	book := book.Book {
+		Title: "$500 How to ways to win",
+		Description: "SIlver Book",
+		Price: 89000,
+		Rating: 4,
+	}
+	bookRepository.Create(book)
+	
+	*/
+	/*
+	books, err := bookRepository.FindAll()
+	for _, book := range books {
+		fmt.Println(book)
+	}
+	*/
 	// TEST CRUD
 
 	// Create
@@ -53,6 +76,7 @@ func main() {
 	*/
 
 	// Find Db
+	/*
 	var book book.Book
 	err = db.Debug().Where("id = ?", 1).First(&book).Error
 	if err != nil {
@@ -60,6 +84,7 @@ func main() {
 		fmt.Println("Error Finding Record")
 		fmt.Println("===========================")
 	}
+	*/
 
 	//deleted
 	/*
